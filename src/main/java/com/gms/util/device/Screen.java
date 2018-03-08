@@ -4,7 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 
 /**
  * Created by gms on 2017/10/20.
@@ -14,7 +19,10 @@ public class Screen {
 
     String TAG = "Screen";
 
+    @Singleton
     private static Screen instance;
+
+    private Activity mActivity;
 
     /**
      * 狀態列(StatusBar)高度 Px
@@ -39,13 +47,12 @@ public class Screen {
     /**
      * 裝置密度
      */
-    public float mDensity ;
+    public float mDensity;
 
     /**
      * 裝置Dpi
      */
-    public int mDensityDpi ;
-
+    public int mDensityDpi;
 
 
     public static Screen getInstance() {
@@ -54,24 +61,44 @@ public class Screen {
         return instance;
     }
 
-    private Screen(Activity activity) {
-        Display display = activity.getWindowManager().getDefaultDisplay();
+
+    public static void Initialize(Activity activity){
+        instance = new Screen(activity) ;
+    }
+
+    @Inject
+    public Screen(Activity activity) {
+//        instance = this;
+        this.mActivity = activity;
+        init();
+        Log.d("AA" , "Screen .... ") ;
+    }
+
+    private void init() {
+        Display display = mActivity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int statusBarID = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        statusBarHeight = activity.getResources().getDimensionPixelSize(statusBarID);
-        int navigationBarID = activity.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (navigationBarExist(activity))
-            navigationBarHeight = navigationBarID > 0 ? activity.getResources().getDimensionPixelSize(navigationBarID) : 0;
+        int statusBarID = mActivity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        statusBarHeight = mActivity.getResources().getDimensionPixelSize(statusBarID);
+        int navigationBarID = mActivity.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (navigationBarExist(mActivity))
+            navigationBarHeight = navigationBarID > 0 ? mActivity.getResources().getDimensionPixelSize(navigationBarID) : 0;
         this.mWidth = size.x;
         this.mHeight = size.y;
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         display.getMetrics(displayMetrics);
-        mDensity = displayMetrics.density ;
-        mDensityDpi = displayMetrics.densityDpi ;
-
+        mDensity = displayMetrics.density;
+        mDensityDpi = displayMetrics.densityDpi;
     }
+
+
+//    public static void init(Activity activity) {
+//        if (instance == null) {
+//            instance = new Screen(activity);
+//        }
+//    }
+
 
     /**
      * 判斷是否有NavigateBar
@@ -82,12 +109,6 @@ public class Screen {
     public boolean navigationBarExist(Context context) {
         int id = context.getResources().getIdentifier("config_showNavigationBar", "bool", "android");
         return id > 0 && context.getResources().getBoolean(id);
-    }
-
-    public static void init(Activity activity) {
-        if (instance == null) {
-            instance = new Screen(activity);
-        }
     }
 
 
@@ -111,17 +132,15 @@ public class Screen {
      * 裝置密度
      */
     public float getDensity() {
-        return mDensity ;
+        return mDensity;
     }
 
     /**
      * 裝置Dpi
      */
     public float getDensityDpi() {
-        return mDensityDpi ;
+        return mDensityDpi;
     }
-
-
 
 
     @Override
@@ -130,8 +149,10 @@ public class Screen {
                 ", statusBarHeight=" + getStatusBarHeight() +
                 ", navigationBarHeight=" + getNavigationBarHeight() +
                 ", Screen(" + mWidth + " / " + mHeight + ")" +
-                ", Density="+getDensity() +
-                ", DensityDpi="+getDensityDpi() +
+                ", Density=" + getDensity() +
+                ", DensityDpi=" + getDensityDpi() +
                 "}";
     }
+
+
 }
