@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.gms.util.device.Screen;
+
 /**
  * Created by gms on 2017/10/20.
  * <p>
@@ -20,8 +22,14 @@ public class ImmersiveActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Screen.Initialize(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Screen.Destroy();
+    }
 
     static Handler handler = new Handler();
 
@@ -45,7 +53,7 @@ public class ImmersiveActivity extends AppCompatActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 //        if (hasFocus)
-            hideSystemUi();
+        hideSystemUi();
 //        else {
 //            View decorView = getWindow().getDecorView();
 //            decorView.setOnSystemUiVisibilityChangeListener(null);

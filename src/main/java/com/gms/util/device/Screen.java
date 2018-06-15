@@ -66,6 +66,11 @@ public class Screen {
         instance = new Screen(activity) ;
     }
 
+    public static void Destroy(){
+        instance.mActivity = null ;
+        instance = null ;
+    }
+
     @Inject
     public Screen(Activity activity) {
 //        instance = this;
