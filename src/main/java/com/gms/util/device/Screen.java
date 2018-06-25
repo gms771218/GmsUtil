@@ -67,8 +67,8 @@ public class Screen {
     }
 
     public static void Destroy(){
-        instance.mActivity = null ;
-        instance = null ;
+//        instance.mActivity = null ;
+//        instance = null ;
     }
 
     @Inject
