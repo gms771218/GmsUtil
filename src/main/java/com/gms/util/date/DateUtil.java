@@ -123,20 +123,30 @@ public class DateUtil {
 
     public static Calendar getCalendar(String dateString) {
         // "2017-03-23T17:00:00+0800"
-        Date date;
+        String[] dateFormatTypes = new String[]{"yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd", "yyyy/MM/dd"};
+        Date date = null;
         Calendar calendar = null;
-        DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        try {
-            date = dateformat.parse(dateString);
-            calendar = Calendar.getInstance();
-            calendar.setTime(date);
-//            Log.d(TAG , calendar.get(Calendar.MONTH)+1 + "/" + calendar.get(Calendar.DATE)) ;
-//            Log.d(TAG , String.format("%02d" , calendar.get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%02d" , calendar.get(Calendar.MINUTE))) ;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } finally {
-            return calendar;
+        DateFormat dateformat ;
+
+        boolean isFormatSuccess = false;
+        for (int i = 0; i < dateFormatTypes.length; i++) {
+            try {
+                dateformat = new SimpleDateFormat(dateFormatTypes[i]);
+                date = dateformat.parse(dateString);
+                isFormatSuccess = true;
+                break;
+            } catch (ParseException e) {
+                e.printStackTrace();
+                isFormatSuccess = false;
+            }
         }
+
+        if (!isFormatSuccess)
+            return null;
+
+        calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
     }
 
     /**
