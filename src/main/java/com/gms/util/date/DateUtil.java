@@ -62,6 +62,12 @@ public class DateUtil {
         return hour == 0 ? String.format("%02d%s%02d%s", minute, signs[1], second , signs[2]) : String.format("%02d%s%02d%s%02d%s", hour, signs[0], minute, signs[1], second,signs[2]);
     }
 
+    /**
+     * 計時時/分/秒
+     * @param value
+     * @param signs
+     * @return
+     */
     public static String countMillisecondToHMS(long value, String... signs) {
 
         if (signs.length == 0)
@@ -73,6 +79,24 @@ public class DateUtil {
         int minute = (int) (value / 60) % 60;
         int hour = (int) (value / 3600) ;
         return hour == 0 ? String.format("%02d%s%02d%s", minute, signs[1], second , signs[2]) : String.format("%02d%s%02d%s%02d%s", hour, signs[0], minute, signs[1], second,signs[2]);
+    }
+
+    /**
+     * 計算時/分
+     * @param value
+     * @param signs
+     * @return
+     */
+    public static String countMillisecondToHM(long value, String... signs) {
+
+        if (signs.length == 0)
+            signs = new String[]{DEFAULT_SIGN, DEFAULT_SIGN};
+
+        // 毫秒轉換成秒數
+        value = (int) (value / 1000);
+        int minute = (int) (value / 60) % 60;
+        int hour = (int) (value / 3600) ;
+        return hour == 0 ? String.format("%d%s", minute , signs[1])  : String.format("%d%s%d%s", hour, signs[0], minute , signs[1]) ;
     }
 
 
