@@ -11,6 +11,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
+ * Modify by gms on 2018.09.05
+ * 新增'yyMMddHHmmss'格式解析
  * Created by gms on 2017/10/20.
  */
 
@@ -19,7 +21,7 @@ public class DateUtil {
     static final String TAG = "DateUtil";
 
     public enum DateType {
-        YYYYMMDDTHHMMSS("yyyy-MM-dd HH:mm:ss"), YYYYMMDD("yyyy-MM-dd");
+        YYYYMMDDTHHMMSS("yyyy-MM-dd HH:mm:ss"), YYYYMMDD("yyyy-MM-dd") , YYMMDDHHMMSS("yyMMddHHmmss");
         String format;
 
         DateType(String format) {
@@ -114,6 +116,10 @@ public class DateUtil {
                 formatter = new SimpleDateFormat(dateType.YYYYMMDD.getFormat());
                 dateStr = formatter.format(date);
                 break;
+            case YYMMDDHHMMSS:
+                formatter = new SimpleDateFormat(dateType.YYMMDDHHMMSS.getFormat());
+                dateStr = formatter.format(date);
+                break;
         }
         return dateStr;
     }
@@ -139,6 +145,15 @@ public class DateUtil {
                 MM = String.format("%02d", calendar.get(Calendar.MONTH) + 1);
                 dd = String.format("%02d", calendar.get(Calendar.DATE));
                 dateStr = String.format("%s/%s/%s", yyyy, MM, dd);
+                break;
+            case YYMMDDHHMMSS:
+                yyyy = String.format("%04d", calendar.get(Calendar.YEAR));
+                MM = String.format("%02d", calendar.get(Calendar.MONTH) + 1);
+                dd = String.format("%02d", calendar.get(Calendar.DATE));
+                hh = String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY));
+                mm = String.format("%02d", calendar.get(Calendar.MINUTE));
+                ss = String.format("%02d", calendar.get(Calendar.SECOND));
+                dateStr = String.format("%s/%s/%s %s:%s:%s", yyyy.substring(2,4), MM, dd, hh, mm, ss);
                 break;
         }
         return dateStr;
