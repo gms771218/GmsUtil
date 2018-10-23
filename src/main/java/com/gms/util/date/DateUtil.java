@@ -162,7 +162,7 @@ public class DateUtil {
 
     public static Calendar getCalendar(String dateString) {
         // "2017-03-23T17:00:00+0800"
-        String[] dateFormatTypes = new String[]{"yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd", "yyyy/MM/dd"};
+        String[] dateFormatTypes = new String[]{"yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd", "yyyy/MM/dd" , "yyyy-MM-dd HH:mm:ss"};
         Date date = null;
         Calendar calendar = null;
         DateFormat dateformat ;
