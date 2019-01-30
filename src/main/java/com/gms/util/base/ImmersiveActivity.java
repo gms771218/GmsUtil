@@ -1,12 +1,20 @@
 package com.gms.util.base;
 
+import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.gms.util.device.Screen;
+import com.gms.util.interfaces.IOnKeyboardVisibilityListener;
 
 /**
  * Modify by gms on 2019/01/29.
@@ -18,7 +26,7 @@ import com.gms.util.device.Screen;
  * refer : https://developer.android.com/training/system-ui/immersive.html
  */
 
-public class ImmersiveActivity extends AppCompatActivity {
+public class ImmersiveActivity extends AppCompatActivity implements IOnKeyboardVisibilityListener {
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -119,6 +127,12 @@ public class ImmersiveActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow() ;
+        setKeyboardVisibilityListener(this);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         hide();
@@ -147,7 +161,39 @@ public class ImmersiveActivity extends AppCompatActivity {
         hide();
     }
 
-//    static Handler handler = new Handler();
+    @Override
+    public void onVisibilityChanged(boolean visible) {
+        if(!visible) hide() ;
+    }
+
+    private void setKeyboardVisibilityListener( final IOnKeyboardVisibilityListener onKeyboardVisibilityListener) {
+
+       final View parentView = ((ViewGroup)(findViewById(android.R.id.content))).getChildAt(0) ;
+        parentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+             boolean alreadyOpen = false ;
+             int defaultKeyboardHeightDP = 100 ;
+             int EstimatedKeyboardDP = defaultKeyboardHeightDP + ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) ? 48 : 0) ;
+             Rect rect = new Rect() ;
+
+            @Override
+            public void onGlobalLayout() {
+                int estimatedKeyboardHeight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics()) ;
+                parentView.getWindowVisibleDisplayFrame(rect) ;
+               int heightDiff = parentView.getRootView().getHeight() - rect.bottom - rect.top ;
+               boolean isShown = heightDiff >= estimatedKeyboardHeight ;
+                if (isShown == alreadyOpen) {
+                    Log.i("Keyboard state", "Ignoring global layout change...") ;
+                    onKeyboardVisibilityListener.onVisibilityChanged(isShown) ;
+                    return ;
+                }
+                alreadyOpen = isShown ;
+                onKeyboardVisibilityListener.onVisibilityChanged(isShown) ;
+            }
+        }) ;
+    }
+
+    //    static Handler handler = new Handler();
 //
 //    @Override
 //    protected void onResume() {
